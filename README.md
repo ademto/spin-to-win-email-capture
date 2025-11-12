@@ -1,33 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎡 Spin to Win - Interactive Prize Wheel
+
+A Next.js application with a spinning wheel game that collects user emails and integrates with MailerLite.
+
+## Features
+
+- ✅ **Entry Form** - Collect user name and email with validation
+- ✅ **Custom Spinning Wheel** - Built from scratch using HTML Canvas
+- ✅ **MailerLite Integration** - Automatically subscribe users to your mailing list
+- ✅ **Prize System** - Configurable prizes with weighted probabilities
+- ✅ **Responsive Design** - Works on desktop and mobile
+- ✅ **One Spin Per Email** - Prevents multiple submissions from same email
+
+## Tech Stack
+
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type-safe code
+- **Tailwind CSS** - Styling
+- **MailerLite API** - Email marketing integration
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+
+Copy the sample environment file:
+
+```bash
+cp .env.sample .env.local
+```
+
+Then edit `.env.local` and add your MailerLite credentials:
+
+```env
+MAILERLITE_API_KEY=your_api_key_here
+MAILERLITE_GROUP_ID=your_group_id_here  # Optional
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+#### Getting MailerLite Credentials:
+
+1. **API Key**: 
+   - Go to https://dashboard.mailerlite.com/integrations/api
+   - Generate a new API key
+   
+2. **Group ID** (Optional):
+   - Go to your MailerLite Groups
+   - Click on the group you want to add subscribers to
+   - The Group ID is in the URL
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+spin-to-wheel/
+├── app/
+│   ├── page.tsx              # Main page with state management
+│   ├── components/
+│   │   ├── EntryForm.tsx     # Name/Email collection form
+│   │   ├── SpinWheel.tsx     # Canvas-based spinning wheel
+│   │   └── ResultModal.tsx   # Prize display modal
+│   └── api/
+│       └── subscribe/
+│           └── route.ts      # MailerLite API integration
+├── lib/
+│   └── prizes.ts             # Prize configuration
+└── .env.local                # Environment variables (create this)
+```
 
-## Learn More
+## Customizing Prizes
 
-To learn more about Next.js, take a look at the following resources:
+Edit `lib/prizes.ts` to customize your prizes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```typescript
+export const prizes: Prize[] = [
+  {
+    id: '1',
+    label: '10% OFF',
+    color: '#FF6B6B',
+    textColor: '#FFFFFF',
+    probability: 0.3,  // 30% chance
+  },
+  // Add more prizes...
+];
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How It Works
+
+1. **User enters name and email** → Validated on frontend
+2. **Form submits to `/api/subscribe`** → Adds subscriber to MailerLite
+3. **If successful** → User proceeds to spin wheel
+4. **Wheel spins and lands on prize** → Updates MailerLite with prize info
+5. **Result modal shows** → User sees what they won
+
+## Deployment
+
+Deploy to Vercel (Recommended):
+
+1. Push your code to GitHub
+2. Import project to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
+
+## License
+
+MIT
+
 
 ## Deploy on Vercel
 

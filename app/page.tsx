@@ -4,6 +4,7 @@ import { useState } from 'react';
 import EntryForm from './components/EntryForm';
 import SpinWheel from './components/SpinWheel';
 import { Prize } from '@/lib/prizes';
+import { generatePrizePromoCode } from '@/lib/promoCode';
 
 type AppState = 'form' | 'wheel' | 'result';
 
@@ -11,6 +12,7 @@ export default function Home() {
   const [state, setState] = useState<AppState>('form');
   const [userData, setUserData] = useState({ name: '', email: '' });
   const [wonPrize, setWonPrize] = useState<Prize | null>(null);
+  const [promoCode, setPromoCode] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -19,23 +21,10 @@ export default function Home() {
     setError('');
 
     try {
-      // First, subscribe to MailerLite
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe');
-      }
-
-      // Success - move to wheel
+      // Store user data first
       setUserData({ name, email });
+      
+      // Move to wheel (we'll send to MailerLite after they spin)
       setState('wheel');
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -45,8 +34,73 @@ export default function Home() {
   };
 
   const handleSpinComplete = async (prize: Prize) => {
+    // Generate unique promo code if needed
+    const generatedPromoCode = prize.needsPromoCode 
+      ? generatePrizePromoCode(prize.label) 
+      : null;
+    
     setWonPrize(prize);
+    setPromoCode(generatedPromoCode);
     setState('result');
+
+    // Create discount code in Shopify if needed
+    if (generatedPromoCode) {
+      try {
+        const shopifyResponse = await fetch('/api/create-shopify-discount', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: generatedPromoCode,
+          }),
+        });
+
+        if (!shopifyResponse.ok) {
+          console.error('Failed to create Shopify discount code');
+        }
+      } catch (err) {
+        console.error('Error creating Shopify discount:', err);
+      }
+    }
+
+    // Now subscribe to MailerLite with prize information
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          email: userData.email,
+          prize: prize.label,
+          promoCode: generatedPromoCode,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to subscribe to MailerLite:', err);
+    }
+
+    // Send email if prize requires it (e.g., $50 gift with promo code)
+    if (prize.emailRequired) {
+      try {
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: userData.name,
+            email: userData.email,
+            prize: prize.label,
+            promoCode: generatedPromoCode,
+          }),
+        });
+      } catch (err) {
+        console.error('Failed to send email:', err);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -54,6 +108,7 @@ export default function Home() {
     setState('form');
     setUserData({ name: '', email: '' });
     setWonPrize(null);
+    setPromoCode(null);
     setError('');
   };
 
@@ -116,10 +171,12 @@ export default function Home() {
               <div>
                 {/* Success Message */}
                 <div className="text-center mb-6">
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                    Congratulations, {userData.name}!
+                  <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                    {userData.name}!
                   </h2>
-                  <p className="text-gray-600">You won:</p>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    {wonPrize.message}
+                  </p>
                 </div>
 
                 {/* Prize Display */}
@@ -135,19 +192,36 @@ export default function Home() {
                   </p>
                 </div>
 
+                {/* Promo Code (if $50 gift) */}
+                {wonPrize.emailRequired && promoCode && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-green-800 text-center mb-2">
+                      Your promo code for $50 off on purchases over $100:
+                    </p>
+                    <p className="text-2xl font-bold text-green-900 text-center tracking-wider">
+                      {promoCode}
+                    </p>
+                    <p className="text-xs text-green-700 text-center mt-2">
+                      Check your email for details!
+                    </p>
+                  </div>
+                )}
+
                 {/* Instructions */}
-                <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-blue-800 text-center">
-                    Check your email for details on how to claim your prize!
-                  </p>
-                </div>
+                {wonPrize.emailRequired && (
+                  <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-blue-800 text-center">
+                      An email has been sent to {userData.email} with your promo code details.
+                    </p>
+                  </div>
+                )}
 
                 {/* Reset Button */}
                 <button
                   onClick={handleClose}
                   className="w-full py-3 bg-black hover:bg-gray-800 text-white font-bold rounded-lg hover:scale-105 transition-transform shadow-lg"
                 >
-                  Try Again
+                  Play Again
                 </button>
               </div>
             )}

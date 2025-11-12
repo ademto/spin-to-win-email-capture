@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email } = await request.json();
+    const { name, email, prize, promoCode } = await request.json();
 
     // Validate input
     if (!name || !email) {
@@ -31,6 +31,17 @@ export async function POST(request: NextRequest) {
         name: name,
       },
     };
+
+    // Add prize information if provided
+    if (prize) {
+      subscriberData.fields.prize = prize;
+      subscriberData.fields.prize_date = new Date().toISOString();
+      
+      // Add promo code if exists (for $50 gift)
+      if (promoCode) {
+        subscriberData.fields.promo_code = promoCode;
+      }
+    }
 
     // Add to group if groupId is provided
     if (groupId) {

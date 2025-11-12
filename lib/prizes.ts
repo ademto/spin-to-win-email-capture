@@ -3,51 +3,52 @@ export interface Prize {
   label: string;
   color: string;
   textColor?: string;
-  probability?: number; // Optional: for weighted random selection
+  probability?: number;
+  message: string; // Custom message to display
+  emailRequired?: boolean; // Whether to send email with promo code
+  needsPromoCode?: boolean; // Whether this prize needs a unique promo code
 }
 
 export const prizes: Prize[] = [
   {
     id: '1',
-    label: '10% OFF',
+    label: '$50 Gift',
     color: '#FF6B6B',
     textColor: '#FFFFFF',
-    probability: 0.3,
+    probability: 0.1,
+    message: 'Congratulations! You won $50!',
+    emailRequired: true,
+    needsPromoCode: true,
   },
   {
     id: '2',
     label: '20% OFF',
     color: '#4ECDC4',
     textColor: '#FFFFFF',
-    probability: 0.25,
+    probability: 0.3,
+    message: 'Congratulations! Please collect your 20% off gift card from the Echo & Ember team.',
+    emailRequired: false,
+    needsPromoCode: false,
   },
   {
     id: '3',
-    label: 'FREE SHIPPING',
+    label: 'Free Product',
     color: '#45B7D1',
     textColor: '#FFFFFF',
     probability: 0.2,
+    message: 'Congratulations! Please collect your free product from the Echo & Ember team.',
+    emailRequired: false,
+    needsPromoCode: false,
   },
   {
     id: '4',
-    label: '5% OFF',
-    color: '#FFA07A',
-    textColor: '#FFFFFF',
-    probability: 0.15,
-  },
-  {
-    id: '5',
-    label: 'TRY AGAIN',
+    label: 'No Luck',
     color: '#98D8C8',
     textColor: '#2C3E50',
-    probability: 0.05,
-  },
-  {
-    id: '6',
-    label: '50% OFF',
-    color: '#F7DC6F',
-    textColor: '#2C3E50',
-    probability: 0.05,
+    probability: 0.4,
+    message: 'Better luck next time!',
+    emailRequired: false,
+    needsPromoCode: false,
   },
 ];
 

@@ -1,4 +1,4 @@
-# 🎡 Spin to Win - Interactive Prize Wheel
+# Spin to Win - Interactive Prize Wheel
 
 A Next.js application with a spinning wheel game that collects user emails and integrates with MailerLite.
 

@@ -36,9 +36,12 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
     ctx.translate(-centerX, -centerY);
 
     // Draw segments
+    // Offset by half a segment so segments are centered with the pointer at top
+    const angleOffset = -segmentAngle / 2;
+    
     prizes.forEach((prize, index) => {
-      const startAngle = (index * segmentAngle * Math.PI) / 180;
-      const endAngle = ((index + 1) * segmentAngle * Math.PI) / 180;
+      const startAngle = ((index * segmentAngle + angleOffset) * Math.PI) / 180;
+      const endAngle = (((index + 1) * segmentAngle + angleOffset) * Math.PI) / 180;
 
       // Draw segment
       ctx.beginPath();
@@ -95,12 +98,17 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
     const winningIndex = Math.floor(Math.random() * prizes.length);
     const winningPrize = prizes[winningIndex];
 
-    // Calculate target rotation
-    // We want the pointer (top) to land in the middle of the winning segment
-    const baseRotation = 360 * 5; // 5 full spins
-    const segmentOffset = winningIndex * segmentAngle;
-    const centerOffset = segmentAngle / 2;
-    const targetRotation = baseRotation + (360 - segmentOffset - centerOffset);
+    // Calculate target rotation to land pointer in center of winning segment
+    // The pointer is at the top (0 degrees), and segments are drawn from 0
+    const baseRotation = 360 * 5; // 5 full spins for effect
+    
+    // Calculate the angle to the CENTER of the winning segment
+    const segmentCenterAngle = winningIndex * segmentAngle + (segmentAngle / 2);
+    
+    // We need to rotate so that the segment center aligns with the pointer (top)
+    // Since pointer is at top (0°) and wheel rotates clockwise, we need to rotate
+    // the wheel so the segment comes to the top
+    const targetRotation = baseRotation + (360 - segmentCenterAngle);
 
     // Animation parameters
     const duration = 4000; // 4 seconds

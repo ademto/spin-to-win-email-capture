@@ -11,9 +11,8 @@ export default function ResultModal({ prize, onClose }: ResultModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform animate-bounce-in">
-        {/* Confetti Effect */}
+        {/* Success Message */}
         <div className="text-center mb-6">
-          <div className="text-6xl mb-4">🎉</div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Congratulations!
           </h2>
@@ -36,7 +35,7 @@ export default function ResultModal({ prize, onClose }: ResultModalProps) {
         {/* Instructions */}
         <div className="bg-blue-50 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800 text-center">
-            📧 Check your email for details on how to claim your prize!
+            Check your email for details on how to claim your prize!
           </p>
         </div>
 

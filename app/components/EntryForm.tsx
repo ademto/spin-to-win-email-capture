@@ -51,7 +51,7 @@ export default function EntryForm({ onSubmit, isLoading = false }: EntryFormProp
     <div className="w-full max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          🎡 Spin to Win!
+          Spin to Win!
         </h1>
         <p className="text-gray-600">
           Enter your details for a chance to win amazing prizes
@@ -108,7 +108,7 @@ export default function EntryForm({ onSubmit, isLoading = false }: EntryFormProp
           className={`w-full py-4 rounded-lg font-bold text-white text-lg transition-all transform ${
             isLoading
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-linear-to-r from-purple-500 to-pink-500 hover:scale-105 hover:shadow-lg'
+              : 'bg-black hover:bg-gray-800 hover:scale-105 hover:shadow-lg'
           }`}
         >
           {isLoading ? (
@@ -136,7 +136,7 @@ export default function EntryForm({ onSubmit, isLoading = false }: EntryFormProp
               Processing...
             </span>
           ) : (
-            '🎡 Spin the Wheel'
+            'Spin the Wheel'
           )}
         </button>
       </form>

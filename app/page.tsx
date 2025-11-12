@@ -45,23 +45,6 @@ export default function Home() {
   };
 
   const handleSpinComplete = async (prize: Prize) => {
-    // Update MailerLite with prize information
-    try {
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: userData.name,
-          email: userData.email,
-          prize: prize.label,
-        }),
-      });
-    } catch (err) {
-      console.error('Failed to update prize:', err);
-    }
-
     setWonPrize(prize);
     setState('result');
   };
@@ -80,7 +63,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-2">
-            🎡 Spin to Win
+            Spin to Win
           </h1>
           <p className="text-gray-600 text-lg">
             Try your luck and win amazing prizes!
@@ -91,12 +74,10 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 min-h-[600px]">
           {/* Wheel - Left Side */}
           <div className="w-full max-w-lg shrink-0">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <SpinWheel 
-                onSpinComplete={handleSpinComplete} 
-                canSpin={state === 'wheel'} 
-              />
-            </div>
+            <SpinWheel 
+              onSpinComplete={handleSpinComplete} 
+              canSpin={state === 'wheel'} 
+            />
           </div>
 
           {/* Form / Result - Right Side */}
@@ -113,31 +94,28 @@ export default function Home() {
             )}
 
             {state === 'wheel' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                <div className="text-center">
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                    Good luck, {userData.name}! 🍀
-                  </h2>
-                  <p className="text-gray-600 mb-6">
-                    The wheel is spinning...
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                  Good luck, {userData.name}!
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  The wheel is spinning...
+                </p>
+                <div className="bg-white/80 backdrop-blur rounded-lg p-6 shadow-lg">
+                  <p className="text-lg text-gray-700 font-medium mb-2">
+                    Get ready for your prize!
                   </p>
-                  <div className="bg-linear-to-r from-purple-100 to-pink-100 rounded-lg p-6">
-                    <p className="text-lg text-gray-700 font-medium mb-2">
-                      🎉 Get ready for your prize!
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      The wheel will stop on your winning prize
-                    </p>
-                  </div>
+                  <p className="text-sm text-gray-600">
+                    The wheel will stop on your winning prize
+                  </p>
                 </div>
               </div>
             )}
 
             {state === 'result' && wonPrize && (
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                {/* Confetti Effect */}
+              <div>
+                {/* Success Message */}
                 <div className="text-center mb-6">
-                  <div className="text-6xl mb-4">🎉</div>
                   <h2 className="text-3xl font-bold text-gray-800 mb-2">
                     Congratulations, {userData.name}!
                   </h2>
@@ -146,7 +124,7 @@ export default function Home() {
 
                 {/* Prize Display */}
                 <div
-                  className="py-8 px-6 rounded-xl mb-6 text-center"
+                  className="py-8 px-6 rounded-xl mb-6 text-center shadow-lg"
                   style={{ backgroundColor: wonPrize.color }}
                 >
                   <p
@@ -160,14 +138,14 @@ export default function Home() {
                 {/* Instructions */}
                 <div className="bg-blue-50 rounded-lg p-4 mb-6">
                   <p className="text-sm text-blue-800 text-center">
-                    📧 Check your email for details on how to claim your prize!
+                    Check your email for details on how to claim your prize!
                   </p>
                 </div>
 
                 {/* Reset Button */}
                 <button
                   onClick={handleClose}
-                  className="w-full py-3 bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:scale-105 transition-transform"
+                  className="w-full py-3 bg-black hover:bg-gray-800 text-white font-bold rounded-lg hover:scale-105 transition-transform shadow-lg"
                 >
                   Try Again
                 </button>

@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       console.error('MailerLite API error:', data);
       
-      // Check if subscriber already exists
-      if (response.status === 422 || data.message?.includes('already exists')) {
+      // Check if subscriber already exists (MailerLite returns this for duplicate emails)
+      if (response.status === 422 || response.status === 409 || data.message?.includes('already') || data.errors?.email) {
         return NextResponse.json(
           { error: 'This email has already been used. Only one spin per email!' },
           { status: 409 }

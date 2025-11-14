@@ -14,9 +14,8 @@ export default function ResultModal({ prize, onClose }: ResultModalProps) {
         {/* Success Message */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Congratulations!
+            {prize.message}
           </h2>
-          <p className="text-gray-600">You won:</p>
         </div>
 
         {/* Prize Display */}
@@ -33,16 +32,18 @@ export default function ResultModal({ prize, onClose }: ResultModalProps) {
         </div>
 
         {/* Instructions */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-blue-800 text-center">
-            Check your email for details on how to claim your prize!
-          </p>
-        </div>
+        {prize.emailRequired && (
+          <div className="bg-blue-50 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800 text-center">
+              Your promo code has been sent to your email!
+            </p>
+          </div>
+        )}
 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="w-full py-3 bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:scale-105 transition-transform"
+          className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-lg hover:scale-105 transition-transform"
         >
           Close
         </button>

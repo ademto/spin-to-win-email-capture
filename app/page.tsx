@@ -21,10 +21,30 @@ export default function Home() {
     setError('');
 
     try {
-      // Store user data first
+      // Check if email already exists in MailerLite
+      const checkResponse = await fetch('/api/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const checkData = await checkResponse.json();
+
+      if (checkResponse.status === 409 || checkData.exists) {
+        // Email already exists
+        setError(checkData.error || 'This email has already been used. Only one spin per email!');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!checkResponse.ok) {
+        throw new Error(checkData.error || 'Failed to verify email');
+      }
+
+      // Store user data and move to wheel
       setUserData({ name, email });
-      
-      // Move to wheel (we'll send to MailerLite after they spin)
       setState('wheel');
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -82,7 +102,7 @@ export default function Home() {
       console.error('Failed to subscribe to MailerLite:', err);
     }
 
-    // Send email if prize requires it (e.g., $50 gift with promo code)
+    // Send email if prize requires it
     if (prize.emailRequired) {
       try {
         await fetch('/api/send-email', {
@@ -192,20 +212,6 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Promo Code (if $50 gift) */}
-                {wonPrize.emailRequired && promoCode && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-green-800 text-center mb-2">
-                      Your promo code for $50 off on purchases over $100:
-                    </p>
-                    <p className="text-2xl font-bold text-green-900 text-center tracking-wider">
-                      {promoCode}
-                    </p>
-                    <p className="text-xs text-green-700 text-center mt-2">
-                      Check your email for details!
-                    </p>
-                  </div>
-                )}
 
                 {/* Instructions */}
                 {wonPrize.emailRequired && (

@@ -23,6 +23,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Determine discount details based on prize
+    let discountDescription = '';
+    let discountAmount = '';
+    
+    if (prize === '50% OFF') {
+      discountDescription = 'Use this promo code to get 50% off your purchase:';
+      discountAmount = '50% discount';
+    } else if (prize === '20% OFF') {
+      discountDescription = 'Use this promo code to get 20% off your purchase:';
+      discountAmount = '20% discount';
+    } else if (prize === 'Free Product') {
+      discountDescription = 'Use this promo code to claim your free product:';
+      discountAmount = 'free product';
+    }
+
     // Email content based on prize
     const emailContent = `
       <!DOCTYPE html>
@@ -45,15 +60,15 @@ export async function POST(request: NextRequest) {
           <div class="content">
             <h2>You Won: ${prize}</h2>
             ${promoCode ? `
-              <p>Use this promo code to get $50 off on purchases over $100:</p>
+              <p>${discountDescription}</p>
               <div class="promo-code">${promoCode}</div>
               <p><strong>How to redeem:</strong></p>
               <ul>
-                <li>Add items worth $100 or more to your cart</li>
+                <li>Add items to your cart</li>
                 <li>Enter promo code at checkout</li>
-                <li>Enjoy your $50 discount!</li>
+                <li>Enjoy your ${discountAmount}!</li>
               </ul>
-              <p><strong>Terms:</strong> Valid for 30 days. Minimum purchase $100. Cannot be combined with other offers.</p>
+              <p><strong>Terms:</strong> Valid for 30 days. Cannot be combined with other offers.</p>
             ` : `
               <p>Please visit Echo & Ember to collect your prize!</p>
             `}

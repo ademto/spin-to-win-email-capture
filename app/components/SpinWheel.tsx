@@ -60,7 +60,7 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
       ctx.rotate(startAngle + (segmentAngle * Math.PI) / 360);
       ctx.textAlign = 'center';
       ctx.fillStyle = prize.textColor || '#FFFFFF';
-      ctx.font = 'bold 16px Arial';
+      ctx.font = 'bold 22px Arial';
       ctx.fillText(prize.label, radius * 0.65, 10);
       ctx.restore();
     });

@@ -36,8 +36,8 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
     ctx.translate(-centerX, -centerY);
 
     // Draw segments
-    // Offset by half a segment so segments are centered with the pointer at top
-    const angleOffset = -segmentAngle / 2;
+    // No offset - segments start at top so pointer points to center
+    const angleOffset = 0;
     
     prizes.forEach((prize, index) => {
       const startAngle = ((index * segmentAngle + angleOffset) * Math.PI) / 180;

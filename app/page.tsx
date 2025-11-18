@@ -238,7 +238,10 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center py-8 text-gray-600 text-sm">
-        <p>© 2025 Spin to Win. All rights reserved.</p>
+        <div className="flex flex-col items-center gap-4">
+          <img src="/logo.png" alt="Logo" className="h-12 w-auto" />
+          <p>© 2025 Spin to Win. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );

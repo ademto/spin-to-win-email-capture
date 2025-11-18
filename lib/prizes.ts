@@ -43,7 +43,7 @@ export const prizes: Prize[] = [
   {
     id: '4',
     label: 'No Luck',
-    color: '#98D8C8',
+    color: '#f4f4f4',
     textColor: '#2C3E50',
     probability: 0.4,
     message: 'Better luck next time!',

@@ -36,8 +36,8 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
     ctx.translate(-centerX, -centerY);
 
     // Draw segments
-    // No offset - segments start at top so pointer points to center
-    const angleOffset = 0;
+    // Offset by half a segment so the CENTER of first segment is at top (where pointer is)
+    const angleOffset = -segmentAngle / 2;
     
     prizes.forEach((prize, index) => {
       const startAngle = ((index * segmentAngle + angleOffset) * Math.PI) / 180;
@@ -98,17 +98,24 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
     const winningIndex = Math.floor(Math.random() * prizes.length);
     const winningPrize = prizes[winningIndex];
 
+    console.log('Winning prize:', winningPrize.label, 'Index:', winningIndex);
+
     // Calculate target rotation to land pointer in center of winning segment
-    // The pointer is at the top (0 degrees), and segments are drawn from 0
     const baseRotation = 360 * 5; // 5 full spins for effect
     
-    // Calculate the angle to the CENTER of the winning segment
-    const segmentCenterAngle = winningIndex * segmentAngle + (segmentAngle / 2);
+    // The wheel rotates, and we need to calculate how much to rotate
+    // so that the winning segment ends up at the top (where the pointer is)
+    // Segments are drawn starting from index 0 at angle -segmentAngle/2
+    // So segment 0 center is at 0°, segment 1 center is at 90°, etc.
     
-    // We need to rotate so that the segment center aligns with the pointer (top)
-    // Since pointer is at top (0°) and wheel rotates clockwise, we need to rotate
-    // the wheel so the segment comes to the top
-    const targetRotation = baseRotation + (360 - segmentCenterAngle);
+    // Based on testing: No Luck (index 3) appears at right when arrow points to 50% OFF
+    // This means we need to rotate counter-clockwise by 90° to bring No Luck to top
+    // Visual positions: Index 0 (50% OFF) at 90°, Index 1 (20% OFF) at 180°, Index 2 (Free Product) at 270°, Index 3 (No Luck) at 0°
+    const visualAngles = [90, 180, 270, 0]; // Map index to current visual angle
+    const segmentVisualAngle = visualAngles[winningIndex];
+    const targetRotation = baseRotation - segmentVisualAngle;
+    
+    console.log('Segment angle:', segmentAngle, 'Visual angle:', segmentVisualAngle, 'Target rotation:', targetRotation);
 
     // Animation parameters
     const duration = 4000; // 4 seconds

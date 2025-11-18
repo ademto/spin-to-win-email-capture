@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { code } = await request.json();
+    const { code, prizeLabel } = await request.json();
 
     if (!code) {
       return NextResponse.json(
@@ -13,7 +13,20 @@ export async function POST(request: NextRequest) {
 
     const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
     const accessToken = process.env.SHOPIFY_ADMIN_API_TOKEN;
-    const priceRuleId = process.env.SHOPIFY_PRICE_RULE_ID;
+    
+    // Determine which price rule to use based on prize
+    let priceRuleId;
+    if (prizeLabel === '50% OFF') {
+      priceRuleId = process.env.SHOPIFY_PRICE_RULE_ID_50;
+    } else if (prizeLabel === '20% OFF') {
+      priceRuleId = process.env.SHOPIFY_PRICE_RULE_ID_20;
+    } else {
+      // Free Product doesn't need a Shopify discount code
+      return NextResponse.json({
+        success: true,
+        message: 'No Shopify code needed for this prize',
+      });
+    }
 
     if (!shopDomain || !accessToken || !priceRuleId) {
       console.error('Missing Shopify configuration');

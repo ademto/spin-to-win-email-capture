@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { prizes, Prize, segmentAngle } from '@/lib/prizes';
+import { prizes, segmentAngle, Prize, getRandomPrize } from '@/lib/prizes';
 
 interface SpinWheelProps {
   onSpinComplete: (prize: Prize) => void;
@@ -94,9 +94,9 @@ export default function SpinWheel({ onSpinComplete, canSpin }: SpinWheelProps) {
 
     setIsSpinning(true);
 
-    // Determine winning segment (random)
-    const winningIndex = Math.floor(Math.random() * prizes.length);
-    const winningPrize = prizes[winningIndex];
+    // Determine winning segment using weighted probability
+    const winningPrize = getRandomPrize();
+    const winningIndex = prizes.findIndex(p => p.id === winningPrize.id);
 
     console.log('Winning prize:', winningPrize.label, 'Index:', winningIndex);
 
